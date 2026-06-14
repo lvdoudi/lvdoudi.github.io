@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地震监测系统聚合面板</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'quake-red': '#dc2626',
+                        'quake-orange': '#ea580c',
+                        'quake-yellow': '#ca8a04',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0f172a;
+        }
+        
+        iframe {
+            border: none;
+            overflow: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        iframe::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .panel {
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+        
+        .panel:hover {
+            border-color: rgba(156, 163, 175, 0.4);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .panel-header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 10px 14px;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 1px solid rgba(75, 85, 99, 0.5);
+        }
+        
+        .panel-content {
+            flex: 1;
+            min-height: 0;
+        }
+        
+        @keyframes blink {
+            0%, 100% {
+                background-color: #22c55e;
+                opacity: 1;
+            }
+            50% {
+                background-color: #4ade80;
+                opacity: 0.6;
+            }
+        }
+        
+        .status-blink {
+            animation: blink 2s infinite;
+        }
+        
+        .nav-bar {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        /* 免责弹窗样式 */
+        .mask-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.85);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .decl-box {
+            width: 90%;
+            max-width: 650px;
+            max-height: 80vh;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 12px;
+            padding: 24px;
+            color: #e2e8f0;
+            overflow-y: auto;
+        }
+        .main-page {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 min-h-screen text-gray-100 select-none antialiased">
+    <!-- 免责弹窗 初始显示 -->
+    <div class="mask-layer" id="mask">
+        <div class="decl-box">
+            <h2 class="text-xl font-bold text-white mb-4 border-b border-slate-600 pb-2">免责与开发者声明</h2>
+            <div class="space-y-3 text-sm leading-relaxed">
+                <p><strong>开发者信息：</strong>本地震监测聚合面板由 地壳 独立开发制作，整体整合、页面搭建全部为本人完成，参考外部网页仅作为嵌入数据源。</p>
+                <p><strong>一、使用风险自负</strong><br>本站仅聚合第三方公开地震页面做展示，不保证数据绝对精准、实时无误；用户查看、使用本页面产生的一切直接、间接损失，开发者与本页面均不承担任何赔偿责任。</p>
+                <p><strong>二、违法行为责任自担</strong><br>使用者若利用本页面信息实施造谣、传播不实灾情、违规炒作等任何违反法律法规行为，全部法律、行政责任由使用者本人独自承担，开发者概不承担连带责任。</p>
+                <p><strong>三、第三方站点免责</strong><br>面板内嵌入的ExpTech、Kanameishi、观测直播等均为外部第三方网站内容，我方不对第三方内容安全、隐私政策、服务稳定性负责。</p>
+                <p><strong>四、运行故障免责</strong><br>因网络波动、服务器维护、攻击、浏览器兼容问题造成面板空白、加载失败、卡顿中断等情况，不提供任何补偿与责任承担。</p>
+                <p class="text-yellow-300 font-medium mt-4">重要提示：点击下方同意按钮，即代表你已完整阅读、理解并自愿接受本声明全部条款，方可正常使用本监测面板。</p>
+            </div>
+            <button onclick="agreeDecl()" class="w-full mt-5 py-3 bg-quake-red hover:bg-red-700 rounded-lg font-bold transition-colors">
+                ✅ 阅读完毕，同意并进入监测面板
+            </button>
+        </div>
+    </div>
+
+    <!-- 主体页面 默认隐藏 -->
+    <div class="main-page" id="mainContent">
+        <!-- 导航栏 -->
+        <header class="nav-bar px-6 py-3 flex items-center justify-between shadow-md relative z-50">
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-2.5 h-2.5 rounded-full bg-green-400 status-blink shadow-lg shadow-green-400/50"></div>
+                    <h1 class="text-white text-base font-semibold tracking-tight">🌍 地震监测系统聚合面板</h1>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-gray-300 flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 shadow-sm shadow-green-400/50"></span>
+                    <span class="font-medium tracking-wide text-[11px] uppercase">Live</span>
+                </div>
+                <span class="text-gray-400 font-mono text-sm tracking-wider" id="last-update">--:--:--</span>
+            </div>
+        </header>
+        <!-- 主体内容区 - 2x2 网格布局 -->
+        <div class="p-4 h-[calc(100vh-53px)]">
+            <div class="grid grid-cols-2 gap-4 h-full">
+                
+                <!-- 第1个：ExpTech 地震速报 -->
+                <div class="panel bg-slate-900/60 border border-slate-800/60 rounded-xl overflow-hidden">
+                    <div class="panel-header flex items-center gap-2">
+                        <span class="text-red-400 text-sm">🗾</span>
+                        <span class="text-xs font-bold tracking-wider text-gray-200">ExpTech 地震速报系统</span>
+                        <a href="https://jasper.exptech.dev/" target="_blank" class="ml-auto text-blue-400 hover:text-blue-300 text-xs transition-colors">↗ 打开</a>
+                    </div>
+                    <div class="panel-content">
+                        <iframe src="https://jasper.exptech.dev/" class="w-full h-full rounded-b-xl" title="ExpTech"></iframe>
+                    </div>
+                </div>
+                <!-- 第2个：Scratch 实时地震观测 -->
+                <div class="panel bg-slate-900/60 border border-slate-800/60 rounded-xl overflow-hidden">
+                    <div class="panel-header flex items-center gap-2">
+                        <span class="text-orange-400 text-sm">🌏</span>
+                        <span class="text-xs font-bold tracking-wider text-gray-200">Scratch 实时地震观测器</span>
+                        <a href="https://kotoho7.github.io/scratch-realtime-earthquake-viewer-page/" target="_blank" class="ml-auto text-blue-400 hover:text-blue-300 text-xs transition-colors">↗ 打开</a>
+                    </div>
+                    <div class="panel-content">
+                        <iframe src="https://kotoho7.github.io/scratch-realtime-earthquake-viewer-page/" class="w-full h-full rounded-b-xl" title="Scratch Earthquake Viewer"></iframe>
+                    </div>
+                </div>
+                <!-- 第3个：kanameishi 实时震度地图 -->
+                <div class="panel bg-slate-900/60 border border-slate-800/60 rounded-xl overflow-hidden">
+                    <div class="panel-header flex items-center gap-2">
+                        <span class="text-green-400 text-sm">🗺️</span>
+                        <span class="text-xs font-bold tracking-wider text-gray-200">Kanameishi 实时震度地图</span>
+                        <a href="https://kanameishi.lipomoea.tech/" target="_blank" class="ml-auto text-blue-400 hover:text-blue-300 text-xs transition-colors">↗ 打开</a>
+                    </div>
+                    <div class="panel-content">
+                        <iframe src="https://kanameishi.lipomoea.tech/" class="w-full h-full rounded-b-xl" title="Kanameishi"></iframe>
+                    </div>
+                </div>
+                <!-- 第4个：B站直播视频 -->
+                <div class="panel bg-slate-900/60 border border-slate-800/60 rounded-xl overflow-hidden">
+                    <div class="panel-header flex items-center gap-2">
+                        <span class="text-pink-400 text-sm">📺</span>
+                        <span class="text-xs font-bold tracking-wider text-gray-200">实时地震观测直播 (B站)</span>
+                    </div>
+                    <div class="panel-content">
+                        <iframe frameborder="0" class="w-full h-full rounded-b-xl"
+                            src="https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=22863790&quality=0" allow="fullscreen"
+                            title="B站地震直播">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 同意弹窗切换脚本 -->
+    <script>
+        function agreeDecl(){
+            document.getElementById('mask').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+        }
+        // 时钟脚本
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('last-update').textContent = 
+                now.toLocaleString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+    </script>
+</body>
+</html>
