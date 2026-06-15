@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>系统维护中</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            background: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        /* 简洁卡片 */
+        .card {
+            max-width: 550px;
+            width: 100%;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+            padding: 2rem 1.8rem 2.2rem;
+            text-align: center;
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* 图标区 */
+        .icon {
+            margin-bottom: 1.5rem;
+        }
+
+        .icon svg {
+            width: 64px;
+            height: 64px;
+            stroke: #e67e22;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        /* 核心大字：此页面正在维修中 */
+        .main-text {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1e293b;
+            letter-spacing: 1px;
+            margin: 0.75rem 0 0.5rem;
+            line-height: 1.3;
+        }
+
+        .sub-text {
+            color: #475569;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            border-top: 1px solid #e9edf2;
+            padding-top: 1rem;
+        }
+
+        .message {
+            background: #fef9e3;
+            border-radius: 1.5rem;
+            padding: 0.9rem 1.2rem;
+            margin: 1.5rem 0;
+            color: #92400e;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+            margin: 1rem 0 1.2rem;
+        }
+
+        .chip {
+            background: #f1f5f9;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            color: #334155;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin: 1.2rem 0 0.5rem;
+        }
+
+        .actions a {
+            text-decoration: none;
+            color: #e67e22;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .actions a:hover {
+            color: #b45309;
+            text-decoration: underline;
+        }
+
+        hr {
+            margin: 1rem 0;
+            border: none;
+            border-top: 1px solid #eef2f6;
+        }
+
+        .footer-note {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="icon">
+        <!-- 简洁扳手+螺丝刀图标 -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+            <line x1="4" y1="4" x2="20" y2="20" />
+        </svg>
+    </div>
+
+    <!-- 最重要的字：此页面正在维修中 -->
+    <div class="main-text">
+        此页面正在维修中
+    </div>
+
+    <div class="message">
+        🔧 工程师正在努力检修，稍后即可恢复访问。
+    </div>
+
+    <div class="info-row">
+        <span class="chip">🕒 维护开始：2026.06.15 08:12</span>
+        <span class="chip">⚙️ 优化升级</span>
+    </div>
+
+    <div class="actions">
+        <a href="#" id="refreshBtn">⟳ 刷新页面</a>
+        <a href="#" id="notifyBtn">🔔 通知我</a>
+        <a href="mailto:service@example.com" id="mailSupport">📧 联系支持</a>
+    </div>
+
+    <hr />
+    <div class="footer-note">
+        感谢您的耐心等待，我们将尽快完成维修。
+    </div>
+</div>
+
+<script>
+    (function() {
+        // 刷新页面按钮
+        const refreshBtn = document.getElementById('refreshBtn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.reload();
+            });
+        }
+
+        // 简单通知功能（模拟）
+        const notifyBtn = document.getElementById('notifyBtn');
+        if (notifyBtn) {
+            notifyBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if ('Notification' in window) {
+                    if (Notification.permission === 'granted') {
+                        new Notification('页面维修提醒', {
+                            body: '维修完成后我们会尝试通知您，请稍后刷新页面查看。',
+                            icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23e67e22"%3E%3Cpath d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/%3E%3C/svg%3E'
+                        });
+                        alert('已订阅通知（维修完成后会提醒您）');
+                    } else if (Notification.permission !== 'denied') {
+                        Notification.requestPermission().then(perm => {
+                            if (perm === 'granted') {
+                                new Notification('感谢订阅', { body: '维修完成后将通知您。' });
+                            } else {
+                                alert('您可以稍后手动刷新页面查看进度，感谢理解。');
+                            }
+                        });
+                    } else {
+                        alert('浏览器通知权限已被禁用，您可手动刷新页面查看。');
+                    }
+                } else {
+                    alert('您的浏览器不支持通知，请稍后手动刷新页面。');
+                }
+            });
+        }
+
+        // 处理邮箱联系（防止默认跳转，演示友好弹窗）
+        const mailLink = document.getElementById('mailSupport');
+        if (mailLink) {
+            mailLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('📧 技术支持邮箱：2437180533@qq.com维修期间如有紧急问题请发送邮件，我们会尽快回复。');
+            });
+        }
+
+        // 控制台简单提醒
+        console.log('页面维护模式 — 此页面正在维修中，请稍后再来。');
+    })();
+</script>
+</body>
+</html>
