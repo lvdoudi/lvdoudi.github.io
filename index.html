@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>地震速报监测系统 | 官方网站</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --primary:#00d4ff;
+  --secondary:#7b2ff7;
+  --accent:#00ffcc;
+  --success:#00ff88;
+  --warning:#ffaa00;
+  --bg:#0a0e1a;
+  --bg-light:#111827;
+  --text:#e5e7eb;
+  --text-muted:#9ca3af;
+}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Microsoft YaHei','PingFang SC',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+}
+
+/* 背景粒子效果 */
+.bg-gradient{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:
+    radial-gradient(circle at 20% 50%,rgba(0,212,255,0.08) 0%,transparent 50%),
+    radial-gradient(circle at 80% 80%,rgba(123,47,247,0.08) 0%,transparent 50%),
+    radial-gradient(circle at 40% 20%,rgba(0,255,204,0.05) 0%,transparent 50%);
+  z-index:-1;
+  pointer-events:none;
+}
+
+/* 导航栏 */
+nav{
+  position:fixed;
+  top:0;left:0;
+  width:100%;
+  padding:20px 50px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:rgba(10,14,26,0.8);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(0,212,255,0.1);
+  z-index:100;
+  transition:all 0.3s ease;
+}
+.logo{
+  font-size:22px;
+  font-weight:bold;
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.nav-links{display:flex;gap:30px;align-items:center;}
+.nav-links a{
+  color:var(--text-muted);
+  text-decoration:none;
+  font-size:14px;
+  transition:color 0.3s;
+}
+.nav-links a:hover{color:var(--primary);}
+.qq-group-nav{
+  padding:6px 14px;
+  background:rgba(0,212,255,0.1);
+  border:1px solid rgba(0,212,255,0.3);
+  border-radius:20px;
+  color:var(--primary)!important;
+  font-size:13px!important;
+}
+
+/* 英雄区 */
+.hero{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:0 20px;
+  position:relative;
+}
+.hero h1{
+  font-size:64px;
+  font-weight:800;
+  margin-bottom:20px;
+  background:linear-gradient(135deg,#fff 0%,var(--primary) 50%,var(--accent) 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  animation:glow 3s ease-in-out infinite alternate;
+}
+@keyframes glow{
+  from{filter:drop-shadow(0 0 20px rgba(0,212,255,0.3));}
+  to{filter:drop-shadow(0 0 40px rgba(0,255,204,0.5));}
+}
+.hero p{
+  font-size:20px;
+  color:var(--text-muted);
+  margin-bottom:40px;
+  max-width:600px;
+  line-height:1.8;
+}
+.download-btn{
+  padding:18px 60px;
+  font-size:18px;
+  font-weight:bold;
+  color:#fff;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  border:none;
+  border-radius:50px;
+  cursor:pointer;
+  transition:all 0.3s ease;
+  box-shadow:0 10px 40px rgba(0,212,255,0.3);
+  position:relative;
+  overflow:hidden;
+}
+.download-btn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 15px 50px rgba(0,212,255,0.4);
+}
+.download-btn::before{
+  content:'';
+  position:absolute;
+  top:0;left:-100%;
+  width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);
+  transition:left 0.5s;
+}
+.download-btn:hover::before{left:100%;}
+
+.scroll-hint{
+  position:absolute;
+  bottom:40px;
+  left:50%;
+  transform:translateX(-50%);
+  color:var(--text-muted);
+  font-size:14px;
+  animation:bounce 2s infinite;
+}
+@keyframes bounce{
+  0%,100%{transform:translateX(-50%) translateY(0);}
+  50%{transform:translateX(-50%) translateY(-10px);}
+}
+
+/* 通用区块样式 */
+section{
+  padding:100px 50px;
+  max-width:1200px;
+  margin:0 auto;
+}
+.section-title{
+  font-size:36px;
+  font-weight:bold;
+  text-align:center;
+  margin-bottom:60px;
+  position:relative;
+}
+.section-title::after{
+  content:'';
+  position:absolute;
+  bottom:-15px;
+  left:50%;
+  transform:translateX(-50%);
+  width:60px;
+  height:3px;
+  background:linear-gradient(90deg,var(--primary),var(--accent));
+  border-radius:2px;
+}
+
+/* 滚动动画 */
+.fade-in{
+  opacity:0;
+  transform:translateY(30px);
+  transition:all 0.8s ease;
+}
+.fade-in.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* 功能特性 */
+.features{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:30px;
+}
+.feature-card{
+  background:var(--bg-light);
+  padding:40px 30px;
+  border-radius:20px;
+  border:1px solid rgba(0,212,255,0.1);
+  transition:all 0.4s ease;
+  position:relative;
+  overflow:hidden;
+}
+.feature-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:3px;
+  background:linear-gradient(90deg,var(--primary),var(--accent));
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform 0.4s ease;
+}
+.feature-card:hover{
+  transform:translateY(-10px);
+  border-color:rgba(0,212,255,0.3);
+  box-shadow:0 20px 60px rgba(0,0,0,0.3);
+}
+.feature-card:hover::before{transform:scaleX(1);}
+.feature-icon{
+  width:60px;height:60px;
+  background:linear-gradient(135deg,rgba(0,212,255,0.2),rgba(123,47,247,0.2));
+  border-radius:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  margin-bottom:20px;
+}
+.feature-card h3{
+  font-size:20px;
+  margin-bottom:15px;
+  color:#fff;
+}
+.feature-card p{
+  color:var(--text-muted);
+  line-height:1.7;
+  font-size:14px;
+}
+
+/* API数据源 */
+.api-list{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:20px;
+}
+.api-card{
+  background:var(--bg-light);
+  padding:25px 30px;
+  border-radius:15px;
+  border:1px solid rgba(0,212,255,0.1);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  transition:all 0.3s ease;
+  position:relative;
+  overflow:hidden;
+}
+.api-card:hover{
+  border-color:rgba(0,212,255,0.3);
+  transform:translateX(5px);
+  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+.api-card::before{
+  content:'';
+  position:absolute;
+  left:0;top:0;
+  width:4px;height:100%;
+  background:var(--success);
+}
+.api-info{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+.api-dot{
+  width:10px;height:10px;
+  border-radius:50%;
+  background:var(--success);
+  box-shadow:0 0 10px var(--success);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{
+  0%,100%{opacity:1;}
+  50%{opacity:0.5;}
+}
+.api-name{
+  font-size:15px;
+  font-weight:500;
+  color:#fff;
+}
+.api-desc{
+  font-size:12px;
+  color:var(--text-muted);
+  margin-top:3px;
+}
+.api-ping{
+  font-size:14px;
+  font-weight:bold;
+  color:var(--success);
+  font-family:monospace;
+}
+
+/* 软件预览 */
+.preview{
+  text-align:center;
+}
+.preview-box{
+  background:var(--bg-light);
+  border-radius:20px;
+  padding:60px 40px;
+  border:1px solid rgba(0,212,255,0.15);
+  position:relative;
+  overflow:hidden;
+}
+.preview-box::before{
+  content:'';
+  position:absolute;
+  top:-50%;left:-50%;
+  width:200%;height:200%;
+  background:conic-gradient(from 0deg,transparent,var(--primary),transparent 30%);
+  animation:rotate 4s linear infinite;
+  opacity:0.1;
+}
+@keyframes rotate{to{transform:rotate(360deg);}}
+.preview-content{
+  position:relative;
+  z-index:1;
+  background:#000;
+  padding:40px;
+  border-radius:10px;
+  font-size:32px;
+  color:var(--primary);
+  text-shadow:0 0 20px var(--primary);
+  letter-spacing:2px;
+  white-space:nowrap;
+  overflow:hidden;
+}
+.preview-content span{
+  display:inline-block;
+  animation:marquee 15s linear infinite;
+}
+@keyframes marquee{
+  0%{transform:translateX(100%);}
+  100%{transform:translateX(-100%);}
+}
+
+/* 制作人 */
+.author{
+  text-align:center;
+}
+.author-card{
+  display:inline-block;
+  background:var(--bg-light);
+  padding:50px 80px;
+  border-radius:25px;
+  border:1px solid rgba(0,212,255,0.15);
+  position:relative;
+}
+.avatar{
+  width:120px;height:120px;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  border-radius:50%;
+  margin:0 auto 25px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:48px;
+  font-weight:bold;
+  color:#fff;
+  box-shadow:0 10px 40px rgba(0,212,255,0.3);
+}
+.author-name{
+  font-size:28px;
+  font-weight:bold;
+  margin-bottom:10px;
+  background:linear-gradient(135deg,#fff,var(--primary));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.author-title{
+  color:var(--text-muted);
+  font-size:16px;
+  margin-bottom:20px;
+}
+.author-desc{
+  color:var(--text-muted);
+  font-size:14px;
+  line-height:1.8;
+  max-width:400px;
+}
+
+/* 社区交流 */
+.community{
+  text-align:center;
+}
+.community-card{
+  background:linear-gradient(135deg,rgba(0,212,255,0.08),rgba(123,47,247,0.08));
+  border-radius:25px;
+  padding:50px 40px;
+  border:1px solid rgba(0,212,255,0.2);
+  max-width:600px;
+  margin:0 auto;
+}
+.community-icon{
+  width:80px;height:80px;
+  background:linear-gradient(135deg,#12b7f5,#00d4ff);
+  border-radius:20px;
+  margin:0 auto 25px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:40px;
+  box-shadow:0 10px 30px rgba(18,183,245,0.3);
+}
+.community-card h3{
+  font-size:24px;
+  margin-bottom:15px;
+  color:#fff;
+}
+.community-card p{
+  color:var(--text-muted);
+  margin-bottom:25px;
+  font-size:14px;
+}
+.qq-number{
+  display:inline-block;
+  padding:15px 40px;
+  background:rgba(0,0,0,0.3);
+  border:2px solid var(--primary);
+  border-radius:15px;
+  font-size:28px;
+  font-weight:bold;
+  color:var(--primary);
+  letter-spacing:3px;
+  text-shadow:0 0 15px rgba(0,212,255,0.5);
+  margin-bottom:15px;
+  cursor:pointer;
+  transition:all 0.3s;
+  user-select:all;
+}
+.qq-number:hover{
+  background:rgba(0,212,255,0.1);
+  box-shadow:0 0 30px rgba(0,212,255,0.3);
+}
+.copy-tip{
+  font-size:12px;
+  color:var(--text-muted);
+}
+
+/* 协议区域 */
+.agreement{
+  background:var(--bg-light);
+  border-radius:20px;
+  padding:40px;
+  border:1px solid rgba(0,212,255,0.1);
+  max-height:400px;
+  overflow-y:auto;
+  margin-bottom:40px;
+}
+.agreement h3{
+  color:var(--primary);
+  margin-bottom:15px;
+  margin-top:25px;
+  font-size:18px;
+}
+.agreement h3:first-child{margin-top:0;}
+.agreement p{
+  color:var(--text-muted);
+  line-height:1.8;
+  font-size:14px;
+  margin-bottom:10px;
+}
+.agreement::-webkit-scrollbar{width:6px;}
+.agreement::-webkit-scrollbar-track{background:transparent;}
+.agreement::-webkit-scrollbar-thumb{
+  background:var(--primary);
+  border-radius:3px;
+  opacity:0.5;
+}
+
+/* 下载区域 */
+.download-section{
+  text-align:center;
+}
+.download-box{
+  background:linear-gradient(135deg,rgba(0,212,255,0.1),rgba(123,47,247,0.1));
+  border-radius:25px;
+  padding:60px 40px;
+  border:1px solid rgba(0,212,255,0.2);
+  position:relative;
+  overflow:hidden;
+}
+.download-box h2{
+  font-size:32px;
+  margin-bottom:15px;
+}
+.download-box p{
+  color:var(--text-muted);
+  margin-bottom:30px;
+}
+.version-info{
+  display:flex;
+  justify-content:center;
+  gap:40px;
+  margin-bottom:30px;
+  flex-wrap:wrap;
+}
+.version-item{
+  text-align:center;
+}
+.version-item .label{
+  font-size:12px;
+  color:var(--text-muted);
+  margin-bottom:5px;
+}
+.version-item .value{
+  font-size:18px;
+  font-weight:bold;
+  color:var(--primary);
+}
+
+/* 页脚 */
+footer{
+  text-align:center;
+  padding:40px 20px;
+  border-top:1px solid rgba(0,212,255,0.1);
+  color:var(--text-muted);
+  font-size:14px;
+}
+footer a{
+  color:var(--primary);
+  text-decoration:none;
+}
+.footer-qq{
+  margin-top:15px;
+  font-size:13px;
+}
+.footer-qq span{
+  color:var(--primary);
+  font-weight:bold;
+}
+
+/* 响应式 */
+@media(max-width:768px){
+  nav{padding:15px 20px;}
+  .nav-links{display:none;}
+  .hero h1{font-size:36px;}
+  .hero p{font-size:16px;}
+  section{padding:60px 20px;}
+  .section-title{font-size:28px;}
+  .author-card{padding:40px 30px;}
+  .version-info{gap:20px;}
+  .qq-number{font-size:22px;padding:12px 30px;}
+  .api-list{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-gradient"></div>
+
+<!-- 导航栏 -->
+<nav>
+  <div class="logo">地震速报监测系统</div>
+  <div class="nav-links">
+    <a href="#features">功能特性</a>
+    <a href="#apis">数据源</a>
+    <a href="#preview">软件预览</a>
+    <a href="#author">关于作者</a>
+    <a href="#community">官方群</a>
+    <a href="#agreement">使用协议</a>
+    <a href="#download" class="qq-group-nav">立即下载</a>
+  </div>
+</nav>
+
+<!-- 英雄区 -->
+<section class="hero">
+  <h1 class="fade-in">地震速报监测系统</h1>
+  <p class="fade-in">专业级多源地震预警监测平台<br>接入全球11个权威数据源，毫秒级实时推送</p>
+  <button class="download-btn fade-in" onclick="downloadSoftware()">
+    ⬇ 立即下载
+  </button>
+  <div class="scroll-hint">↓ 向下滚动了解更多</div>
+</section>
+
+<!-- 功能特性 -->
+<section id="features">
+  <h2 class="section-title fade-in">核心功能</h2>
+  <div class="features">
+    <div class="feature-card fade-in">
+      <div class="feature-icon">📡</div>
+      <h3>11路数据源</h3>
+      <p>接入全球11个权威地震数据源，包括中国气象局、美国地质调查局、日本气象厅等，多源冗余永不掉线。</p>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon">🎬</div>
+      <h3>直播投屏专用</h3>
+      <p>专为直播场景优化，OBS一键抓取，支持透明背景、自定义字体颜色、滚动速度调节，完美适配各种直播场景。</p>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon">⚡</div>
+      <h3>毫秒级响应</h3>
+      <p>优化的数据传输协议，地震预警信息毫秒级推送，智能多源比对，比单一官方APP更快更准更稳定。</p>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon">🎨</div>
+      <h3>高度自定义</h3>
+      <p>字体、颜色、大小、滚动速度、背景透明度全部可调，支持多种预设主题，打造专属于你的监测界面。</p>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon">🌐</div>
+      <h3>远程控制</h3>
+      <p>支持手机端远程下发字幕内容，异地直播也能实时更新文字，团队协作更高效，远程管理更便捷。</p>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon">💾</div>
+      <h3>历史记录</h3>
+      <p>自动保存所有历史地震记录和字幕内容，支持导出数据，方便后期复盘整理，地震研究数据一手掌握。</p>
+    </div>
+  </div>
+</section>
+
+<!-- API数据源 -->
+<section id="apis">
+  <h2 class="section-title fade-in">支持数据源</h2>
+  <div class="api-list fade-in">
+    <div class="api-card">
+      <div class="api-info">
+        <div class="api-dot"></div>
+        <div>
+          <div class="api-name">TimeAPI.io</div>
+          <div class="api-desc">北京时间授时服务</div>
+        </div>
+      </div>
+      <div class="api-ping">77ms</div>
+    </div>
+    <div class="api-card">
+      <div class="api-info">
+        <div class="api-dot"></div>
+        <div>
+          <div class="api-name">CMA 中国气象局</div>
+          <div class="api-desc">国家官方气象地震数据</div>
+        </div>
+      </div>
+      <div class="api-ping">--</div>
+    </div>
+    <div class="api-card">
+      <div class="api-info">
+        <div class="api-dot"></div>
+        <div>
+          <div class="api-name">NWS 美国国家气象局</div>
+          <div class="api-desc">NOAA官方气象预警</div>
+        </div>
+      </div>
+      <div class="api-ping">28ms</div>
+    </div>
+    <div class="api-card">
+      <div class="api-info">
+        <div class="api-dot"></div>
+        <div>
+          <div class="api-name">WMO Global CAP</div>
+          <div class="api-desc">全球融合预警系统</div>
+        </div>
+      </div>
+      <div class="api-ping">7ms</div>
+    </div>
+    <div class="api-card">
+      <div class="api-info">
+        <div class="api-dot"></div>
+        <div>
+          <div class="api-name">USGS 地质调查局</div>
+          <div class="api-desc">美国官方地震数据</div>
+        </div>
+      </div>
+      <div class="api-ping">3ms</div>
+    </div>
+    <div class="api-card">
+      <div class="api-info">
+        <div class="api-dot"></div>
+        <div>
+          <div class="api-name">Wolfx · 中国地震局</div>
+          <div class="api-desc">EEWlist 国内地震预警</div>
+        </div>
+      </div>
+      <div class="api-ping">45ms</div>
+    </div>
+    <div class="api-card">
+      <div class="api-info">
+        <div class="api-dot"></div>
+        <div>
+          <div class="api-name">Wolfx · JMA</div>
+          <div class="api-desc">日本气象厅地震速报</div>
+        </div>
+      </div>
+      <div class="api-ping">605ms</div>
+    </div>
+    <div class="api-card">
+      <div class="api-info">
+        <div class="api-dot"></div>
+        <div>
+          <div class="api-name">P2P 地震情報 API</div>
+          <div class="api-desc">日本民间地震预警网络</div>
+        </div>
+      </div>
+      <div class="api-ping">631ms</div>
+    </div>
+    <div class="api-card">
+      <div class="api-info">
+        <div class="api-dot"></div>
+        <div>
+          <div class="api-name">FanStudio</div>
+          <div class="api-desc">全球Websocket聚合源</div>
+        </div>
+      </div>
+      <div class="api-ping">10ms</div>
+    </div>
+    <div class="api-card">
+      <div class="api-info">
+        <div class="api-dot"></div>
+        <div>
+          <div class="api-name">EISC 四川减灾中心</div>
+          <div class="api-desc">国内区域地震数据中心</div>
+        </div>
+      </div>
+      <div class="api-ping">66ms</div>
+    </div>
+    <div class="api-card">
+      <div class="api-info">
+        <div class="api-dot"></div>
+        <div>
+          <div class="api-name">GFZ 德国地球研究中心</div>
+          <div class="api-desc">GEOFON 全球地震台网</div>
+        </div>
+      </div>
+      <div class="api-ping">--</div>
+    </div>
+  </div>
+</section>
+
+<!-- 软件预览 -->
+<section id="preview">
+  <h2 class="section-title fade-in">软件预览</h2>
+  <div class="preview-box fade-in">
+    <div class="preview-content">
+      <span>【紧急地震速报】宫古岛西北冲 震级6.2 震源深度10km 预计最大震度4 请注意安全 | 地震速报监测系统实时推送</span>
+    </div>
+  </div>
+</section>
+
+<!-- 制作人 -->
+<section id="author">
+  <h2 class="section-title fade-in">关于作者</h2>
+  <div class="author fade-in">
+    <div class="author-card">
+      <div class="avatar">张</div>
+      <div class="author-name">小张台 ZhangTai</div>
+      <div class="author-title">独立开发者 / 地震监测爱好者</div>
+      <div class="author-desc">
+        专注于地震监测与实时预警技术研究，致力于为公众提供更快、更准、更稳定的地震信息服务。
+        所有软件均为个人开发，免费开源，欢迎交流学习。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 官方群 -->
+<section id="community">
+  <h2 class="section-title fade-in">加入社区</h2>
+  <div class="community fade-in">
+    <div class="community-card">
+      <div class="community-icon">💬</div>
+      <h3>官方QQ交流群</h3>
+      <p>加入官方群，获取最新版本更新、BUG反馈、技术交流<br>和一群地震监测爱好者一起探讨</p>
+      <div class="qq-number" onclick="copyQQ()" title="点击复制">1045291782</div>
+      <div class="copy-tip">点击群号即可复制</div>
+    </div>
+  </div>
+</section>
+
+<!-- 使用协议 -->
+<section id="agreement">
+  <h2 class="section-title fade-in">使用协议</h2>
+  <div class="agreement fade-in">
+    <h3>一、软件许可</h3>
+    <p>本软件为免费开源软件，您可以自由下载、安装、使用、复制和分发本软件，但必须保留完整的版权声明和许可协议。</p>
+    
+    <h3>二、使用限制</h3>
+    <p>1. 禁止将本软件用于任何违法违规用途；</p>
+    <p>2. 禁止对本软件进行反向工程、反编译、反汇编或其他形式的修改；</p>
+    <p>3. 禁止将本软件用于商业用途，包括但不限于出售、出租、有偿分发等；</p>
+    <p>4. 禁止移除或修改本软件中的版权标识、作者信息。</p>
+    
+    <h3>三、免责声明</h3>
+    <p>1. 本软件仅作为地震信息展示工具，不构成任何形式的官方预警或避险建议；</p>
+    <p>2. 地震数据来源于第三方公开API，作者不对数据的准确性、及时性、完整性做任何保证；</p>
+    <p>3. 因使用本软件造成的任何直接或间接损失，作者不承担任何责任；</p>
+    <p>4. 地震预警请以官方发布为准，遇到地震请按照官方指导科学避险。</p>
+    
+    <h3>四、数据隐私</h3>
+    <p>本软件不会收集任何用户个人信息，所有配置数据均保存在本地设备。软件运行过程中产生的网络流量仅用于获取地震数据，不会上传任何用户信息。</p>
+    
+    <h3>五、数据源说明</h3>
+    <p>1. 本软件接入的所有地震数据均来自第三方公开API，包括但不限于中国气象局、美国地质调查局、日本气象厅等官方机构；</p>
+    <p>2. 各数据源的延迟、准确性、可用性由对应数据提供方负责，本软件仅做数据展示与整合；</p>
+    <p>3. 如遇数据源故障、维护、关停等情况，本软件可能出现部分功能不可用，敬请谅解。</p>
+    
+    <h3>六、社区规范</h3>
+    <p>1. 加入官方交流群请遵守群规，文明交流，禁止发布违法违规内容；</p>
+    <p>2. 群内仅讨论地震监测、软件使用等相关话题，禁止刷屏、广告等行为；</p>
+    <p>3. 欢迎提出建议和反馈，共同促进软件改进。</p>
+    
+    <h3>七、协议更新</h3>
+    <p>作者保留随时更新本协议的权利，更新后的协议将在软件新版本中发布，继续使用软件即表示您同意更新后的协议。</p>
+    
+    <h3>八、联系方式</h3>
+    <p>如有问题、建议或合作意向，可通过官方QQ群（1045291782）联系作者。感谢您对开源项目的支持！</p>
+  </div>
+</section>
+
+<!-- 下载区域 -->
+<section id="download">
+  <h2 class="section-title fade-in">立即下载</h2>
+  <div class="download-box fade-in">
+    <h2>地震速报监测系统 v2.1.0</h2>
+    <p>最新稳定版 · 支持 Windows 10/11 · 完全免费</p>
+    <div class="version-info">
+      <div class="version-item">
+        <div class="label">版本号</div>
+        <div class="value">v2.1.0</div>
+      </div>
+      <div class="version-item">
+        <div class="label">更新时间</div>
+        <div class="value">2026.07.03</div>
+      </div>
+      <div class="version-item">
+        <div class="label">文件大小</div>
+        <div class="value">15.8 MB</div>
+      </div>
+      <div class="version-item">
+        <div class="label">系统要求</div>
+        <div class="value">Win10/11</div>
+      </div>
+    </div>
+    <button class="download-btn" onclick="downloadSoftware()">
+      ⬇ 下载 ZIP 压缩包
+    </button>
+  </div>
+</section>
+
+<!-- 页脚 -->
+<footer>
+  <p>© 2026 小张台 ZhangTai · 地震速报监测系统</p>
+  <p class="footer-qq">官方QQ群：<span>1045291782</span></p>
+  <p style="margin-top:10px;font-size:12px;">
+    本软件仅供学习交流使用 · 地震预警请以官方发布为准
+  </p>
+</footer>
+
+<script>
+// 滚动动画
+const observerOptions = {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+    }
+  });
+}, observerOptions);
+
+document.querySelectorAll('.fade-in').forEach(el => {
+  observer.observe(el);
+});
+
+// 导航栏滚动效果
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav');
+  if(window.scrollY > 50){
+    nav.style.padding = '15px 50px';
+    nav.style.background = 'rgba(10,14,26,0.95)';
+  }else{
+    nav.style.padding = '20px 50px';
+    nav.style.background = 'rgba(10,14,26,0.8)';
+  }
+});
+
+// 下载功能
+function downloadSoftware(){
+  // 替换成你的zip文件实际地址
+  const downloadUrl = 'YT.zip';
+  
+  // 创建临时下载链接
+  const a = document.createElement('a');
+  a.href = downloadUrl;
+  a.download = '地震速报监测系统_v2.1.0.zip';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// 复制QQ群号
+function copyQQ(){
+  const qq = '1045291782';
+  navigator.clipboard.writeText(qq).then(() => {
+    const tip = document.querySelector('.copy-tip');
+    const original = tip.innerText;
+    tip.innerText = '✓ 已复制到剪贴板！';
+    tip.style.color = 'var(--accent)';
+    setTimeout(() => {
+      tip.innerText = original;
+      tip.style.color = '';
+    }, 2000);
+  }).catch(() => {
+    alert('群号：1045291782');
+  });
+}
+
+// 平滑滚动到锚点
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e){
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if(target){
+      target.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  });
+});
+
+// API卡片依次出现动画
+const apiCards = document.querySelectorAll('.api-card');
+apiCards.forEach((card, index) => {
+  card.style.transitionDelay = `${index * 0.05}s`;
+});
+</script>
+
+</body>
+</html>
