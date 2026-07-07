@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>小张台 · 高级软件</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0b0d11;
+      color: #eef2f6;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+    }
+
+    /* 头部 */
+    .hero {
+      padding: 48px 0 32px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      backdrop-filter: blur(2px);
+      background: linear-gradient(145deg, rgba(20,25,35,0.6), rgba(8,10,16,0.8));
+      border-radius: 0 0 48px 48px;
+      margin-bottom: 40px;
+      box-shadow: 0 20px 40px -12px rgba(0,0,0,0.7);
+    }
+    .hero-content {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-icon {
+      width: 54px;
+      height: 54px;
+      background: linear-gradient(135deg, #6c8cff, #a78bfa);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 24px;
+      color: white;
+      box-shadow: 0 8px 20px rgba(108,140,255,0.25);
+    }
+    .brand h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(to right, #f0f4ff, #b9c8ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .creator-tag {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(4px);
+      padding: 10px 20px;
+      border-radius: 60px;
+      border: 1px solid rgba(255,255,255,0.06);
+      font-size: 15px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      text-decoration: none;
+      color: #d6deff;
+    }
+    .creator-tag:hover {
+      background: rgba(108,140,255,0.15);
+      border-color: #6c8cff;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px -8px rgba(108,140,255,0.2);
+    }
+    .creator-tag span { color: #a78bfa; font-weight: 600; margin-left: 4px; }
+
+    /* 下载 */
+    .download-section {
+      display: flex;
+      justify-content: center;
+      margin: 40px 0 48px;
+    }
+    .download-btn {
+      background: linear-gradient(135deg, #6c8cff, #7c5cfc);
+      border: none;
+      padding: 20px 56px;
+      border-radius: 80px;
+      font-size: 22px;
+      font-weight: 600;
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 16px 40px -8px rgba(108,140,255,0.35);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      letter-spacing: 0.3px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .download-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 24px 48px -8px #6c8cff66;
+      background: linear-gradient(135deg, #7c9cff, #8b6cfc);
+    }
+    .download-btn:active { transform: scale(0.97); }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px 18px;
+      margin: 8px 0 20px;
+      font-size: 13px;
+      color: #8892b0;
+    }
+    .badge-row span {
+      background: rgba(255,255,255,0.03);
+      padding: 4px 16px;
+      border-radius: 40px;
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+
+    /* API网格 */
+    .api-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 18px;
+      margin: 36px 0 48px;
+    }
+    .api-card {
+      background: rgba(18,22,33,0.7);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.03);
+      border-radius: 24px;
+      padding: 18px 16px;
+      transition: all 0.4s cubic-bezier(0.2, 0, 0, 1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      font-size: 14px;
+      font-weight: 500;
+      color: #c8d0e6;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      letter-spacing: 0.2px;
+    }
+    .api-card:hover {
+      transform: translateY(-4px) scale(1.01);
+      background: rgba(30,38,58,0.8);
+      border-color: rgba(108,140,255,0.25);
+      box-shadow: 0 12px 28px -8px #0b0d11cc;
+    }
+    .api-card .num {
+      background: rgba(108,140,255,0.12);
+      color: #8aa3ff;
+      font-weight: 700;
+      width: 28px;
+      height: 28px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+    .api-card .name { flex: 1; }
+    .api-card .tag {
+      font-size: 10px;
+      background: rgba(255,255,255,0.03);
+      padding: 2px 10px;
+      border-radius: 30px;
+      color: #6f7b9c;
+      border: 1px solid rgba(255,255,255,0.02);
+    }
+
+    /* 创作者 */
+    .creator-profile {
+      margin: 48px 0 24px;
+      background: radial-gradient(circle at 10% 30%, rgba(108,140,255,0.06), transparent 70%);
+      border-radius: 40px;
+      padding: 32px 28px;
+      border: 1px solid rgba(255,255,255,0.02);
+      backdrop-filter: blur(2px);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .creator-profile .info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .creator-profile .avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 30px;
+      background: linear-gradient(145deg, #6c8cff, #a78bfa);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 28px;
+      color: white;
+      box-shadow: 0 10px 20px -6px #6c8cff55;
+    }
+    .creator-profile .detail { font-size: 16px; }
+    .creator-profile .detail strong {
+      font-size: 20px;
+      font-weight: 600;
+      background: linear-gradient(to right, #d6deff, #b9c8ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .creator-profile .detail strong:hover {
+      letter-spacing: 0.5px;
+      filter: drop-shadow(0 0 10px #6c8cff66);
+    }
+    .creator-profile .detail .sub {
+      color: #8892b0;
+      font-size: 14px;
+      display: block;
+      margin-top: 4px;
+    }
+    .creator-profile .qun-badge {
+      background: rgba(255,255,255,0.02);
+      padding: 8px 20px;
+      border-radius: 60px;
+      font-size: 14px;
+      border: 1px solid rgba(255,255,255,0.03);
+      color: #b9c8ff;
+    }
+    .qun-badge span { font-weight: 700; color: white; }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.02);
+      font-size: 14px;
+      color: #5a6488;
+    }
+
+    /* ===== 增强滚动动画 ===== */
+    .scroll-animate {
+      opacity: 0;
+      transform: translateY(40px) scale(0.96);
+      transition: all 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+      will-change: transform, opacity;
+    }
+    .scroll-animate.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    /* API卡片逐个延迟 */
+    .api-card.scroll-animate {
+      transition-delay: 0s;
+    }
+    .api-card.scroll-animate.visible {
+      transition-delay: 0s;
+    }
+
+    /* 弹窗 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(10px);
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+      background: #171e2b;
+      border-radius: 48px;
+      max-width: 460px;
+      width: 100%;
+      padding: 40px 32px 32px;
+      border: 1px solid rgba(255,255,255,0.04);
+      box-shadow: 0 40px 80px -12px black;
+      text-align: center;
+    }
+    .modal-box h3 {
+      font-size: 26px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      background: linear-gradient(to right, #d6deff, #b9c8ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .modal-box p { color: #9aa4c2; margin: 16px 0 24px; font-size: 16px; }
+
+    /* 倒计时 + 直接跳转按钮 横向布局 */
+    .timer-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin: 8px auto 20px;
+    }
+    .modal-box .timer {
+      font-size: 48px;
+      font-weight: 700;
+      color: white;
+      background: rgba(108,140,255,0.06);
+      width: 80px;
+      height: 80px;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255,255,255,0.02);
+      flex-shrink: 0;
+    }
+    .btn-jump-direct {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 12px 20px;
+      border-radius: 40px;
+      color: #b9c8ff;
+      font-weight: 500;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+    .btn-jump-direct:hover {
+      background: rgba(108,140,255,0.2);
+      border-color: #6c8cff;
+      transform: scale(1.03);
+      box-shadow: 0 0 20px rgba(108,140,255,0.15);
+    }
+    .btn-jump-direct:active { transform: scale(0.95); }
+
+    .modal-box .btn-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .modal-box .btn-group button {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.04);
+      padding: 12px 28px;
+      border-radius: 60px;
+      color: #c8d0e6;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+      flex: 1;
+      min-width: 120px;
+    }
+    .modal-box .btn-group button.primary {
+      background: linear-gradient(135deg, #6c8cff, #7c5cfc);
+      border: none;
+      color: white;
+      font-weight: 600;
+    }
+    .modal-box .btn-group button.primary:hover {
+      box-shadow: 0 8px 24px #6c8cff44;
+      transform: scale(1.02);
+    }
+    .modal-box .btn-group button:active { transform: scale(0.96); }
+
+    @media (max-width: 640px) {
+      .hero-content { flex-direction: column; align-items: start; gap: 16px; }
+      .creator-tag { align-self: flex-start; }
+      .download-btn { width: 100%; justify-content: center; padding: 18px 24px; font-size: 18px; }
+      .api-grid { grid-template-columns: 1fr 1fr; }
+      .creator-profile { flex-direction: column; align-items: start; gap: 18px; }
+      .timer-row { flex-wrap: wrap; gap: 12px; }
+    }
+    @media (max-width: 440px) { .api-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header class="hero scroll-animate" id="top">
+    <div class="hero-content">
+      <div class="brand">
+        <div class="brand-icon">⚡</div>
+        <h1>小张台 · ZhangTai</h1>
+      </div>
+      <a href="#" class="creator-tag" id="creatorTagLink">
+        <span>✧</span> 制作者 <span>小张台</span> <span style="font-weight:300;margin:0 4px;">·</span> ZhangTai
+      </a>
+    </div>
+  </header>
+
+  <div class="download-section scroll-animate">
+    <button class="download-btn" id="downloadMainBtn">
+      <span>⬇</span> 下载软件
+    </button>
+  </div>
+  <div class="badge-row scroll-animate">
+    <span>🔐 官方密码保护</span>
+    <span>📦 版本 3.2.1</span>
+    <span>🖥 Windows / macOS</span>
+  </div>
+
+  <div style="margin: 12px 0 8px; font-size: 15px; color: #7b86aa; letter-spacing: 0.3px;" class="scroll-animate">
+    ⚙️ 接入全球数据接口
+  </div>
+  <div class="api-grid" id="apiGrid"></div>
+
+  <div class="creator-profile scroll-animate" id="creatorProfile">
+    <div class="info">
+      <div class="avatar">张</div>
+      <div class="detail">
+        <strong id="creatorNameLink">小张台 ZhangTai</strong>
+        <span class="sub">✦ 独立开发者 · 地震/气象数据融合</span>
+      </div>
+    </div>
+    <div class="qun-badge">📢 官方群 <span>221877494</span></div>
+  </div>
+
+  <div class="footer-note scroll-animate">
+    <span>官方群 221877494 · 数据来源权威可靠</span>
+    <div style="margin-top: 10px; font-size: 12px; opacity: 0.4;">© 2026 小张台 · 高级软件</div>
+  </div>
+</div>
+
+<!-- 弹窗 -->
+<div class="modal-overlay" id="downloadModal">
+  <div class="modal-box">
+    <h3>🔐 密码验证</h3>
+    <p>本应用需要获得官方密码才能下载</p>
+    <!-- 倒计时 + 直接跳转按钮 -->
+    <div class="timer-row">
+      <div class="timer" id="countdownDisplay">20</div>
+      <button class="btn-jump-direct" id="jumpDirectBtn">🚀 直接跳转</button>
+    </div>
+    <p style="font-size: 14px; color: #6f7b9c;">自动跳转中…</p>
+    <div class="btn-group">
+      <button id="modalConfirmBtn" class="primary">确定 · 加入群聊</button>
+      <button id="modalCancelBtn">取消</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ---------- API 列表 ----------
+    const apiList = [
+      "TimeAPI.io · 北京时间", "CMA 中国气象局", "NWS 美国国家气象局",
+      "WMO Global CAP 全球融合", "USGS 地质调查局",
+      "Wolfx · 中国地震局 EEWlist", "Wolfx · JMA 日本气象厅",
+      "P2P 地震情報 API", "FanStudio · 全球Websocket",
+      "EISC · 四川减灾中心数据中心", "GFZ · 德国地球研究中心 GEOFON"
+    ];
+    const apiGrid = document.getElementById('apiGrid');
+    apiList.forEach((name, index) => {
+      const card = document.createElement('div');
+      card.className = 'api-card scroll-animate';
+      card.style.transitionDelay = (index * 0.05) + 's';
+      const num = document.createElement('span');
+      num.className = 'num';
+      num.textContent = (index+1).toString().padStart(2,'0');
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'name';
+      nameSpan.textContent = name;
+      const tag = document.createElement('span');
+      tag.className = 'tag';
+      tag.textContent = 'API';
+      card.appendChild(num);
+      card.appendChild(nameSpan);
+      card.appendChild(tag);
+      apiGrid.appendChild(card);
+    });
+
+    // ---------- 滚动动画观察器 ----------
+    const animateElements = document.querySelectorAll('.scroll-animate');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -10px 0px' });
+    animateElements.forEach(el => observer.observe(el));
+
+    setTimeout(() => {
+      document.querySelectorAll('.scroll-animate').forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.85) {
+          el.classList.add('visible');
+        }
+      });
+    }, 80);
+
+    // ---------- 创作者跳转 ----------
+    function jumpToCreator() {
+      window.open('https://lyxzzm.mysxl.cn', '_blank');
+    }
+    document.getElementById('creatorNameLink').addEventListener('click', (e) => { e.preventDefault(); jumpToCreator(); });
+    document.getElementById('creatorTagLink').addEventListener('click', (e) => { e.preventDefault(); jumpToCreator(); });
+
+    // ---------- 下载弹窗 ----------
+    const modal = document.getElementById('downloadModal');
+    const countdownDisplay = document.getElementById('countdownDisplay');
+    const confirmBtn = document.getElementById('modalConfirmBtn');
+    const cancelBtn = document.getElementById('modalCancelBtn');
+    const downloadBtn = document.getElementById('downloadMainBtn');
+    const jumpDirectBtn = document.getElementById('jumpDirectBtn');
+    const NET_DISK_URL = 'https://pan.huang1111.cn/s/oXOlPT8';
+    const GROUP_URL = 'https://qm.qq.com/q/qlk0TYUNEI';
+
+    let timerInterval = null;
+    let countdown = 20;
+    let isRedirecting = false;
+
+    function resetModalTimer() {
+      if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+      countdown = 20;
+      countdownDisplay.textContent = countdown;
+      isRedirecting = false;
+    }
+
+    function openModal() {
+      resetModalTimer();
+      modal.classList.add('active');
+      timerInterval = setInterval(() => {
+        countdown -= 1;
+        countdownDisplay.textContent = countdown >= 0 ? countdown : 0;
+        if (countdown <= 0) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          if (!isRedirecting) {
+            isRedirecting = true;
+            window.open(NET_DISK_URL, '_blank');
+            setTimeout(() => { modal.classList.remove('active'); resetModalTimer(); }, 300);
+          }
+        }
+      }, 1000);
+    }
+
+    function closeModal() {
+      if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+      modal.classList.remove('active');
+      resetModalTimer();
+    }
+
+    // 直接跳转网盘（不关闭弹窗，但可以关闭）
+    function jumpToNetDisk() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      window.open(NET_DISK_URL, '_blank');
+      // 跳转后关闭弹窗
+      modal.classList.remove('active');
+      resetModalTimer();
+    }
+
+    downloadBtn.addEventListener('click', openModal);
+
+    // 直接跳转按钮
+    jumpDirectBtn.addEventListener('click', jumpToNetDisk);
+
+    // 确定：跳群 + 20秒后跳网盘
+    confirmBtn.addEventListener('click', () => {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      window.open(GROUP_URL, '_blank');
+      modal.classList.remove('active');
+      resetModalTimer();
+
+      // 独立20秒倒计时跳网盘
+      let secondCount = 20;
+      const netDiskTimer = setInterval(() => {
+        secondCount -= 1;
+        if (secondCount <= 0) {
+          clearInterval(netDiskTimer);
+          window.open(NET_DISK_URL, '_blank');
+        }
+      }, 1000);
+    });
+
+    cancelBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('active')) closeModal(); });
+  })();
+</script>
+</body>
+</html>
